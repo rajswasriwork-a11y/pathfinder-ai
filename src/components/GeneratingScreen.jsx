@@ -1,30 +1,34 @@
 import React, { useEffect, useState } from 'react';
 import { ShieldCheck } from 'lucide-react';
 
-const STEPS = [
-  "Analyzing academic profile and coursework...",
-  "Querying career trajectory databases...",
-  "Applying constraint adaptation filters...",
-  "Synthesizing customized action milestones...",
-  "Compiling visual dashboard interface..."
+const LOADING_MESSAGES = [
+  'Analyzing your background...',
+  'Mapping the best path for your goals...',
+  'Identifying your skill gaps...',
+  'Building your personalized roadmap...'
 ];
 
 export default function GeneratingScreen({ onComplete }) {
-  const [currentStepIndex, setCurrentStepIndex] = useState(0);
+  const [currentMessageIndex, setCurrentMessageIndex] = useState(0);
 
   useEffect(() => {
-    if (currentStepIndex < STEPS.length) {
-      const timer = setTimeout(() => {
-        setCurrentStepIndex(prev => prev + 1);
-      }, 700); // 700ms per step
+    const interval = setInterval(() => {
+      setCurrentMessageIndex(prev => Math.min(prev + 1, LOADING_MESSAGES.length - 1));
+    }, 2000);
+
+    return () => clearInterval(interval);
+  }, []);
+
+  useEffect(() => {
+    if (currentMessageIndex === LOADING_MESSAGES.length - 1) {
+      const timer = setTimeout(() => onComplete(), 1800);
       return () => clearTimeout(timer);
-    } else {
-      const completeTimer = setTimeout(() => {
-        onComplete();
-      }, 300);
-      return () => clearTimeout(completeTimer);
     }
-  }, [currentStepIndex, onComplete]);
+    return undefined;
+  }, [currentMessageIndex, onComplete]);
+
+  const progressPercent = Math.round(((currentMessageIndex + 1) / LOADING_MESSAGES.length) * 100);
+  const currentMessage = LOADING_MESSAGES[currentMessageIndex];
 
   return (
     <div className="generating-container">
@@ -35,27 +39,14 @@ export default function GeneratingScreen({ onComplete }) {
       </div>
 
       <h3 className="generating-title">Compiling Custom Roadmap</h3>
-      <p style={{ color: 'var(--text-muted)', marginBottom: '2rem' }}>
-        Please wait while our synthesis engine aggregates courses, skills, and timelines.
+      <p className="generating-subtitle">
+        {currentMessage}
       </p>
 
-      <div className="generating-steps">
-        {STEPS.map((step, index) => {
-          let status = 'pending';
-          if (index === currentStepIndex) {
-            status = 'active';
-          } else if (index < currentStepIndex) {
-            status = 'done';
-          }
-
-          return (
-            <div key={index} className={`gen-step ${status}`}>
-              <div className="gen-step-dot"></div>
-              <span>{step}</span>
-            </div>
-          );
-        })}
+      <div className="generating-progress-bar" aria-hidden="true">
+        <div className="generating-progress-fill" style={{ width: `${progressPercent}%` }} />
       </div>
+      <span className="generating-progress-label">{progressPercent}% complete</span>
     </div>
   );
 }

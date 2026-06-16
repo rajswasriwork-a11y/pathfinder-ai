@@ -1,7 +1,7 @@
 import React from 'react';
 import { Compass, Sparkles, BookOpen, Layers, CheckSquare, ArrowRight, Shield, Award } from 'lucide-react';
 
-export default function LandingPage({ onStart }) {
+export default function LandingPage({ onStart, savedRoadmap, onViewSavedRoadmap, onClearSavedRoadmap }) {
   return (
     <div className="landing-container">
       {/* Hero Section */}
@@ -11,17 +11,43 @@ export default function LandingPage({ onStart }) {
             <Sparkles size={14} />
             <span></span> Powered by PathFinder Engine
           </div>
-          <h1>Map Your Academic Journey to Career Success</h1>
+          <h1>Know exactly what to learn next — and in what order.</h1>
           <p>
-            Stop guessing what classes, projects, and certifications you need. 
-            Input your degree, current skills, and target goal to generate a personalized visual roadmap.
+            Tell us your degree, skills, and dream role. PathFinder builds your personalized step-by-step roadmap in seconds.
           </p>
           <div className="hero-actions">
             <button className="btn btn-primary" onClick={onStart} id="btn-hero-start">
-              <span>Generate Your Roadmap</span>
-              <ArrowRight size={18} />
+              <span>Build My Roadmap →</span>
             </button>
+            {savedRoadmap && (
+              <div className="saved-roadmap-actions">
+                <button className="btn btn-secondary" onClick={onViewSavedRoadmap}>
+                  View Previous Roadmap
+                </button>
+                <button className="btn btn-outline" onClick={onClearSavedRoadmap}>
+                  Clear Saved Roadmap
+                </button>
+              </div>
+            )}
           </div>
+
+          {!savedRoadmap && (
+            <div className="saved-empty-state">
+              <div className="empty-state-icon">🧭</div>
+              <div>
+                <p className="empty-state-title">No saved roadmaps yet. Build your first one!</p>
+                <button className="btn btn-secondary" onClick={onStart}>
+                  Start Building
+                </button>
+              </div>
+            </div>
+          )}
+
+          {savedRoadmap && (
+            <div className="saved-roadmap-banner">
+              <p>Last saved roadmap: {new Date(savedRoadmap.savedAt).toLocaleString()}</p>
+            </div>
+          )}
         </div>
 
         <div className="hero-visuals">

@@ -39,20 +39,22 @@ export default function StudentForm({ onSubmit, onBack }) {
   // Add tag functions
   const addSkill = (skill) => {
     const trimmed = skill.trim();
-    if (trimmed && !skills.includes(trimmed)) {
-      setSkills([...skills, trimmed]);
+    const normalized = trimmed.toLowerCase();
+    if (trimmed && !skills.some((existing) => existing.toLowerCase() === normalized)) {
+      setSkills((current) => [...current, trimmed]);
     }
     setSkillInput('');
   };
 
   const removeSkill = (index) => {
-    setSkills(skills.filter((_, i) => i !== index));
+    setSkills((current) => current.filter((_, i) => i !== index));
   };
 
   const addInterest = (interest) => {
     const trimmed = interest.trim();
-    if (trimmed && !interests.includes(trimmed)) {
-      setInterests([...interests, trimmed]);
+    const normalized = trimmed.toLowerCase();
+    if (trimmed && !interests.some((existing) => existing.toLowerCase() === normalized)) {
+      setInterests((current) => [...current, trimmed]);
     }
     setInterestInput('');
   };

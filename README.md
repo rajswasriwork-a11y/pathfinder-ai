@@ -1,22 +1,33 @@
-# PathFinder AI 🧭
+# PathFinder AI
 
-> Personalized academic and career roadmaps for students — built with AI.
+A student-focused web app that generates personalized academic and career roadmaps using AI.
 
-## What is this?
-PathFinder takes your degree, skills, interests, and goals and generates 
-a step-by-step visual roadmap to help you break into your target role 
-(SWE, Data Science, Product Management, and more).
+PathFinder AI helps students get unstuck by turning their degree, skills, interests, and dream role into a clear week-by-week learning path. It creates actionable milestones, suggests real resources, and saves progress locally so users can return and update their roadmap.
 
-## Live Demo
-👉 https://pathfinder-ai-lilac.vercel.app/
+Live demo: https://pathfinder-ai-lilac.vercel.app/
 
-## Built With
-- React + Vite
-- Claude / OpenAI API
-- Deployed on Vercel
+## Tech Stack
+
+- React
+- Vite
+- Plain JavaScript
+- Local storage for roadmap persistence
+- Client-side only, no backend
 
 ## Run Locally
-git clone https://github.com/rajswasriwork-a11y/pathfinder-ai
+
+```bash
+git clone https://github.com/rajswasriwork-a11y/pathfinder-ai.git
 cd pathfinder-ai
 npm install
 npm run dev
+```
+
+## Screenshots
+
+> Add screenshots here once the app is styled and deployed.
+
+## Notes
+
+- The app stores generated roadmaps in browser localStorage.
+- Roadmap generation and progress tracking are handled fully on the client.

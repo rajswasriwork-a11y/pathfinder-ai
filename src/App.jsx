@@ -1,10 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import LandingPage from './components/LandingPage';
 import StudentForm from './components/StudentForm';
 import GeneratingScreen from './components/GeneratingScreen';
 import RoadmapView from './components/RoadmapView';
 import { generateRoadmap } from './data/roadmapTemplates';
 import { Compass } from 'lucide-react';
+
+const STORAGE_KEY = 'pathfinder-ai.latestRoadmap';
 
 export default function App() {
   const [view, setView] = useState('landing'); // 'landing' | 'form' | 'generating' | 'roadmap'
@@ -17,6 +19,36 @@ export default function App() {
     constraints: []
   });
   const [roadmapData, setRoadmapData] = useState(null);
+  const [savedRoadmap, setSavedRoadmap] = useState(null);
+
+  useEffect(() => {
+    try {
+      const persisted = localStorage.getItem(STORAGE_KEY);
+      if (persisted) {
+        const parsed = JSON.parse(persisted);
+        if (parsed?.formData && parsed?.roadmapData) {
+          setSavedRoadmap(parsed);
+        }
+      }
+    } catch (error) {
+      localStorage.removeItem(STORAGE_KEY);
+      setSavedRoadmap(null);
+    }
+  }, []);
+
+  const saveRoadmapToStorage = (savedFormData, savedRoadmapData) => {
+    try {
+      const payload = {
+        formData: savedFormData,
+        roadmapData: savedRoadmapData,
+        savedAt: new Date().toISOString()
+      };
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
+      setSavedRoadmap(payload);
+    } catch (error) {
+      console.warn('Unable to save roadmap locally.', error);
+    }
+  };
 
   const handleStart = () => {
     setView('form');
@@ -34,12 +66,25 @@ export default function App() {
   const handleGenerationComplete = () => {
     const generated = generateRoadmap(formData);
     setRoadmapData(generated);
+    saveRoadmapToStorage(formData, generated);
     setView('roadmap');
   };
 
   const handleReset = () => {
     setRoadmapData(null);
     setView('landing');
+  };
+
+  const handleViewSavedRoadmap = () => {
+    if (!savedRoadmap) return;
+    setFormData(savedRoadmap.formData);
+    setRoadmapData(savedRoadmap.roadmapData);
+    setView('roadmap');
+  };
+
+  const handleClearSavedRoadmap = () => {
+    localStorage.removeItem(STORAGE_KEY);
+    setSavedRoadmap(null);
   };
 
   return (
@@ -64,7 +109,12 @@ export default function App() {
       {/* Main Content Area */}
       <main className="main-content">
         {view === 'landing' && (
-          <LandingPage onStart={handleStart} />
+          <LandingPage 
+            onStart={handleStart} 
+            savedRoadmap={savedRoadmap}
+            onViewSavedRoadmap={handleViewSavedRoadmap}
+            onClearSavedRoadmap={handleClearSavedRoadmap}
+          />
         )}
 
         {view === 'form' && (
